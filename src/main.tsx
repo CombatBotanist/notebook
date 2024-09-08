@@ -4,8 +4,6 @@ import { I18nProvider } from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
 import { StrictMode } from 'react';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-
-// Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
 // Create a new router instance
@@ -28,5 +26,5 @@ createRoot(document.getElementById('root')!).render(
     <I18nProvider locale={'en'} messages={[messages]}>
       <RouterProvider router={router} />
     </I18nProvider>
-  </StrictMode>,
+  </StrictMode>
 );
