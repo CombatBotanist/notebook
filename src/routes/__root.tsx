@@ -7,6 +7,8 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import '@aws-amplify/ui-react/styles.css';
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import { useState } from 'react';
 
 export const Route = createRootRoute({
   component: () => (
@@ -21,6 +23,7 @@ Amplify.configure(outputs);
 
 function Layout() {
   const navigate = useNavigate();
+  const [campaign, setCampaign] = useState<SelectProps.Option>({ label: 'Option 1', value: '1' });
 
   function onFollowHandler(href: string) {
     navigate({
@@ -62,13 +65,38 @@ function Layout() {
                   },
                 },
               ]}
+              search={
+                <Select
+                  selectedOption={campaign}
+                  onChange={({ detail }) => setCampaign(detail.selectedOption)}
+                  options={[
+                    { label: 'Option 1', value: '1' },
+                    { label: 'Option 2', value: '2' },
+                    { label: 'Option 3', value: '3' },
+                    { label: 'Option 4', value: '4' },
+                    { label: 'Option 5', value: '5' },
+                  ]}
+                />
+              }
             />
           </div>
           <AppLayout
             headerSelector='#top-navigation'
             navigation={
               <SideNavigation
-                items={[{ type: 'link', text: 'Notes', href: '/notes' }]}
+                items={[
+                  {
+                    type: 'section-group',
+                    title: 'Notes',
+                    items: [
+                      { type: 'link', text: 'All', href: '/notes' },
+                      { type: 'link', text: 'Person', href: '/notes' },
+                      { type: 'link', text: 'Place', href: '/notes' },
+                      { type: 'link', text: 'Thing', href: '/notes' },
+                      { type: 'link', text: 'Idea', href: '/notes' },
+                    ],
+                  },
+                ]}
                 onFollow={(event) => {
                   event.preventDefault();
                   onFollowHandler(event.detail.href);
