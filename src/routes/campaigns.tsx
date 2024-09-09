@@ -21,6 +21,7 @@ function Campaigns() {
 
   async function deleteCampaign(campaign: Schema['Campaign']['type']) {
     const res = await client.models.Campaign.delete({ id: campaign.id });
+    console.debug(res);
     client.models.Campaign.list().then((res) => setCampaignList(res.data));
   }
 
