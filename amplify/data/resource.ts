@@ -7,9 +7,9 @@ specifies that any unauthenticated user can "create", "read", "update",
 and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Notes: a
+  Note: a
     .model({
-      type: a.enum(['PERSON', 'PLACE', 'THIKNG', 'IDEA']),
+      type: a.enum(['PERSON', 'PLACE', 'THING', 'IDEA']),
       name: a.string().required(),
       description: a.string(),
       campaignId: a.id(),

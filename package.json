@@ -21,6 +21,7 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.2.0",
     "@aws-amplify/backend-cli": "^1.2.5",
+    "@cloudscape-design/design-tokens": "^3.0.43",
     "@eslint/js": "^9.9.0",
     "@tanstack/router-devtools": "^1.56.5",
     "@tanstack/router-plugin": "^1.56.4",

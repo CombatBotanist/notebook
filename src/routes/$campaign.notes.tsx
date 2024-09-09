@@ -1,14 +1,7 @@
-import Box from '@cloudscape-design/components/box';
-import Button from '@cloudscape-design/components/button';
-import Cards from '@cloudscape-design/components/cards';
-import Header from '@cloudscape-design/components/header';
-import Link from '@cloudscape-design/components/link';
-import Pagination from '@cloudscape-design/components/pagination';
-import SpaceBetween from '@cloudscape-design/components/space-between';
-import TextFilter from '@cloudscape-design/components/text-filter';
+import { Box, Button, Cards, Header, Link, SpaceBetween, TextFilter } from '@cloudscape-design/components';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/notes')({
+export const Route = createFileRoute('/$campaign/notes')({
   component: Notes,
 });
 
@@ -90,7 +83,6 @@ function Notes() {
       }
       filter={<TextFilter filteringPlaceholder='Find note' filteringText={''} />}
       header={<Header variant='awsui-h1-sticky'>All notes</Header>}
-      // pagination={<Pagination currentPageIndex={1} pagesCount={2} />}
     />
   );
 }

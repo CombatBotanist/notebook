@@ -11,15 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as NotesImport } from './routes/notes'
+import { Route as CampaignsImport } from './routes/campaigns'
 import { Route as AccountImport } from './routes/account'
 import { Route as NoteImport } from './routes/$note'
+import { Route as CampaignImport } from './routes/$campaign'
 import { Route as IndexImport } from './routes/index'
+import { Route as CampaignNotesImport } from './routes/$campaign.notes'
 
 // Create/Update Routes
 
-const NotesRoute = NotesImport.update({
-  path: '/notes',
+const CampaignsRoute = CampaignsImport.update({
+  path: '/campaigns',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -33,9 +35,19 @@ const NoteRoute = NoteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CampaignRoute = CampaignImport.update({
+  path: '/$campaign',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const CampaignNotesRoute = CampaignNotesImport.update({
+  path: '/notes',
+  getParentRoute: () => CampaignRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -47,6 +59,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$campaign': {
+      id: '/$campaign'
+      path: '/$campaign'
+      fullPath: '/$campaign'
+      preLoaderRoute: typeof CampaignImport
       parentRoute: typeof rootRoute
     }
     '/$note': {
@@ -63,61 +82,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountImport
       parentRoute: typeof rootRoute
     }
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesImport
+    '/campaigns': {
+      id: '/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof CampaignsImport
       parentRoute: typeof rootRoute
+    }
+    '/$campaign/notes': {
+      id: '/$campaign/notes'
+      path: '/notes'
+      fullPath: '/$campaign/notes'
+      preLoaderRoute: typeof CampaignNotesImport
+      parentRoute: typeof CampaignImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface CampaignRouteChildren {
+  CampaignNotesRoute: typeof CampaignNotesRoute
+}
+
+const CampaignRouteChildren: CampaignRouteChildren = {
+  CampaignNotesRoute: CampaignNotesRoute,
+}
+
+const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
+  CampaignRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$campaign': typeof CampaignRouteWithChildren
   '/$note': typeof NoteRoute
   '/account': typeof AccountRoute
-  '/notes': typeof NotesRoute
+  '/campaigns': typeof CampaignsRoute
+  '/$campaign/notes': typeof CampaignNotesRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$campaign': typeof CampaignRouteWithChildren
   '/$note': typeof NoteRoute
   '/account': typeof AccountRoute
-  '/notes': typeof NotesRoute
+  '/campaigns': typeof CampaignsRoute
+  '/$campaign/notes': typeof CampaignNotesRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/$campaign': typeof CampaignRouteWithChildren
   '/$note': typeof NoteRoute
   '/account': typeof AccountRoute
-  '/notes': typeof NotesRoute
+  '/campaigns': typeof CampaignsRoute
+  '/$campaign/notes': typeof CampaignNotesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$note' | '/account' | '/notes'
+  fullPaths:
+    | '/'
+    | '/$campaign'
+    | '/$note'
+    | '/account'
+    | '/campaigns'
+    | '/$campaign/notes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$note' | '/account' | '/notes'
-  id: '__root__' | '/' | '/$note' | '/account' | '/notes'
+  to:
+    | '/'
+    | '/$campaign'
+    | '/$note'
+    | '/account'
+    | '/campaigns'
+    | '/$campaign/notes'
+  id:
+    | '__root__'
+    | '/'
+    | '/$campaign'
+    | '/$note'
+    | '/account'
+    | '/campaigns'
+    | '/$campaign/notes'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CampaignRoute: typeof CampaignRouteWithChildren
   NoteRoute: typeof NoteRoute
   AccountRoute: typeof AccountRoute
-  NotesRoute: typeof NotesRoute
+  CampaignsRoute: typeof CampaignsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CampaignRoute: CampaignRouteWithChildren,
   NoteRoute: NoteRoute,
   AccountRoute: AccountRoute,
-  NotesRoute: NotesRoute,
+  CampaignsRoute: CampaignsRoute,
 }
 
 export const routeTree = rootRoute
@@ -133,13 +198,20 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/$campaign",
         "/$note",
         "/account",
-        "/notes"
+        "/campaigns"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/$campaign": {
+      "filePath": "$campaign.tsx",
+      "children": [
+        "/$campaign/notes"
+      ]
     },
     "/$note": {
       "filePath": "$note.tsx"
@@ -147,8 +219,12 @@ export const routeTree = rootRoute
     "/account": {
       "filePath": "account.tsx"
     },
-    "/notes": {
-      "filePath": "notes.tsx"
+    "/campaigns": {
+      "filePath": "campaigns.tsx"
+    },
+    "/$campaign/notes": {
+      "filePath": "$campaign.notes.tsx",
+      "parent": "/$campaign"
     }
   }
 }
