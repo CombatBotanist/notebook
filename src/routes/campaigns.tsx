@@ -1,6 +1,6 @@
 import { Box, Button, Header, Link, SpaceBetween, Table } from '@cloudscape-design/components';
-import { createFileRoute, useLoaderData } from '@tanstack/react-router';
-import { useState } from 'react';
+import { createFileRoute, useLoaderData, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import type { Schema } from '../../amplify/data/resource';
 import CenteredSpinner from '../components/CenteredSpinner';
 
@@ -16,17 +16,29 @@ export const Route = createFileRoute('/campaigns')({
 });
 
 function Campaigns() {
+  const navigate = useNavigate();
   const { client, campaigns } = useLoaderData({ from: Route.id });
   const [campaignList, setCampaignList] = useState(campaigns.data);
 
+  useEffect(() => {
+    const sub = client.models.Campaign.observeQuery().subscribe({
+      next: ({ items, isSynced }) => {
+        if (isSynced) {
+          setCampaignList(items);
+        }
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
   async function deleteCampaign(campaign: Schema['Campaign']['type']) {
-    const res = await client.models.Campaign.delete({ id: campaign.id });
-    console.debug(res);
+    await client.models.Campaign.delete({ id: campaign.id });
     client.models.Campaign.list().then((res) => setCampaignList(res.data));
   }
 
   return (
     <Table
+      variant='full-page'
       renderAriaLive={({ firstIndex, lastIndex, totalItemsCount }) =>
         `Displaying items ${firstIndex} to ${lastIndex} of ${totalItemsCount}`
       }
@@ -65,12 +77,37 @@ function Campaigns() {
       empty={
         <Box margin={{ vertical: 'xs' }} textAlign='center' color='inherit'>
           <SpaceBetween size='m'>
-            <b>No resources</b>
-            <Button>Create resource</Button>
+            <b>No campaigns</b>
+            <Button
+              onClick={() =>
+                navigate({
+                  to: '/campaigns/create',
+                })
+              }
+            >
+              Create campaign
+            </Button>
           </SpaceBetween>
         </Box>
       }
-      header={<Header> Simple table </Header>}
+      header={
+        <Header
+          variant='h1'
+          actions={
+            <Button
+              onClick={() =>
+                navigate({
+                  to: '/campaigns/create',
+                })
+              }
+            >
+              Create campaign
+            </Button>
+          }
+        >
+          Campaigns
+        </Header>
+      }
     />
   );
 }
