@@ -3,6 +3,23 @@ import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/$campaign/notes')({
   component: Notes,
+  async loader({ context, params }) {
+    const campaign = await context.client.models.Campaign.list({
+      filter: {
+        name: { eq: params.campaign },
+      },
+    });
+    const campaignId = campaign.data[0].id;
+    console.debug(campaign);
+    return {
+      client: context.client,
+      notes: await context.client.models.Note.list({
+        filter: {
+          campaignId: { eq: campaignId },
+        },
+      }),
+    };
+  },
 });
 
 function Notes() {

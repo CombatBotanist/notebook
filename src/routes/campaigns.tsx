@@ -44,21 +44,37 @@ function Campaigns() {
       }
       columnDefinitions={[
         {
-          id: 'name',
-          header: 'Name',
-          cell: (item) => <Link href='#'>{item.name || '-'}</Link>,
+          id: 'friendly-name',
+          header: 'Friendly name',
+          cell: (campaign) => (
+            <Link
+              onFollow={() => {
+                navigate({
+                  to: '/$campaign/notes',
+                  params: { campaign: campaign.name },
+                });
+              }}
+            >
+              {campaign.friendlyName || '-'}
+            </Link>
+          ),
           sortingField: 'name',
           isRowHeader: true,
         },
         {
           id: 'notes',
           header: 'Notes',
-          cell: (item) => item.notes.length || '-',
+          cell: (campaign) => campaign.notes.length || '-',
+        },
+        {
+          id: 'name',
+          header: 'Name',
+          cell: (campaign) => campaign.name || '-',
         },
         {
           id: 'id',
           header: 'ID',
-          cell: (item) => item.id || '-',
+          cell: (campaign) => campaign.id || '-',
         },
         {
           id: 'actions',
