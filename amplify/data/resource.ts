@@ -19,7 +19,7 @@ const schema = a.schema({
   Campaign: a
     .model({
       name: a.string().required(),
-      friendlyName: a.string().required(),
+      friendlyName: a.string(),
       notes: a.hasMany('Note', 'campaignId'),
     })
     .authorization((allow) => [allow.owner()]),

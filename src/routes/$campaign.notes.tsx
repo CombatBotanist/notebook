@@ -11,7 +11,7 @@ import {
   Textarea,
   TextFilter,
 } from '@cloudscape-design/components';
-import { createFileRoute, useLoaderData, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useLoaderData } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/$campaign/notes')({
@@ -23,7 +23,6 @@ export const Route = createFileRoute('/$campaign/notes')({
       },
     });
     const campaignId = campaign.data[0].id;
-    console.debug(campaign);
     return {
       client: context.client,
       campaign: campaign.data[0],
@@ -37,12 +36,11 @@ export const Route = createFileRoute('/$campaign/notes')({
 });
 
 function Notes() {
-  const navigate = useNavigate();
   const { client, campaign, notes } = useLoaderData({ from: Route.id });
   const [noteList, setNoteList] = useState(notes.data);
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [selectedNote, _setSelectedNote] = useState(null);
 
   useEffect(() => {
     client.models.Note.observeQuery({
@@ -138,7 +136,7 @@ type CreateNoteModalProps = {
 };
 
 function CreateNoteModal({ visible, setVisible }: CreateNoteModalProps) {
-  const { client, campaign, notes } = useLoaderData({ from: Route.id });
+  const { client, campaign } = useLoaderData({ from: Route.id });
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
