@@ -21,19 +21,17 @@ function Campaigns() {
   const [campaignList, setCampaignList] = useState(campaigns.data);
 
   useEffect(() => {
-    const sub = client.models.Campaign.observeQuery().subscribe({
+    client.models.Campaign.observeQuery().subscribe({
       next: ({ items, isSynced }) => {
         if (isSynced) {
           setCampaignList(items);
         }
       },
     });
-    return () => sub.unsubscribe();
   }, []);
 
   async function deleteCampaign(campaign: Schema['Campaign']['type']) {
     await client.models.Campaign.delete({ id: campaign.id });
-    client.models.Campaign.list().then((res) => setCampaignList(res.data));
   }
 
   return (
