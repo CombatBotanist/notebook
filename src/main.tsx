@@ -21,7 +21,7 @@ const client = generateClient<Schema>({
 export type Client = typeof client;
 
 // Create a new router instance
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   defaultStaleTime: 5000,

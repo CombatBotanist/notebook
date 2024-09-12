@@ -11,18 +11,19 @@ const schema = a.schema({
     .model({
       type: a.enum(['PERSON', 'PLACE', 'THING', 'IDEA']),
       name: a.string().required(),
+      friendlyName: a.string().required(),
       description: a.string(),
-      campaignId: a.id(),
+      campaignId: a.id().required(),
       campaign: a.belongsTo('Campaign', 'campaignId'),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.owner(), allow.group('Admin')]),
   Campaign: a
     .model({
       name: a.string().required(),
-      friendlyName: a.string(),
+      friendlyName: a.string().required(),
       notes: a.hasMany('Note', 'campaignId'),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.owner(), allow.group('Admin')]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
