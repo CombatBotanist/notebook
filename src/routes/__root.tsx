@@ -129,20 +129,20 @@ function Layout() {
                       { type: 'link', text: 'Create', href: '/campaigns/create' },
                     ],
                   },
-                  {
-                    type: 'divider',
-                  },
-                  {
-                    type: 'section-group',
-                    title: 'Notes',
-                    items: [
-                      { type: 'link', text: 'All', href: '/notes' },
-                      { type: 'link', text: 'Person', href: '/notes?type=person' },
-                      { type: 'link', text: 'Place', href: '/notes?type=place' },
-                      { type: 'link', text: 'Thing', href: '/notes?type=thing' },
-                      { type: 'link', text: 'Idea', href: '/notes?type=idea' },
-                    ],
-                  },
+                  // {
+                  //   type: 'divider',
+                  // },
+                  // {
+                  //   type: 'section-group',
+                  //   title: 'Notes',
+                  //   items: [
+                  //     { type: 'link', text: 'All', href: '/notes' },
+                  //     { type: 'link', text: 'Person', href: '/notes?type=person' },
+                  //     { type: 'link', text: 'Place', href: '/notes?type=place' },
+                  //     { type: 'link', text: 'Thing', href: '/notes?type=thing' },
+                  //     { type: 'link', text: 'Idea', href: '/notes?type=idea' },
+                  //   ],
+                  // },
                 ]}
                 onFollow={(event) => {
                   event.preventDefault();
