@@ -1,6 +1,7 @@
-import { Box, Button, Cards, Header, Link, SpaceBetween, TextFilter } from '@cloudscape-design/components';
+import { Box, Button, Cards, Header, Link, SpaceBetween, TextFilter, type TextFilterProps } from '@cloudscape-design/components';
 import { createFileRoute, useLoaderData, useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export const Route = createFileRoute('/$campaign/notes')({
   component: Notes,
@@ -24,10 +25,28 @@ export const Route = createFileRoute('/$campaign/notes')({
 
 function Notes() {
   const navigate = useNavigate();
+  const filterRef = useRef<TextFilterProps.Ref>(null);
   const { client, campaign, notes } = useLoaderData({ from: Route.id });
   const [noteList, setNoteList] = useState(notes.data);
+  const [filter, setFilter] = useState('');
+
+  useHotkeys('alt+c', () => {
+    navigate({
+      to: '/$campaign/notes/create',
+      params: { campaign: campaign.name },
+    });
+  });
+  useHotkeys('alt+S', () => {
+    if (filterRef.current) {
+      filterRef.current.focus();
+    }
+  });
 
   useEffect(() => {
+    if (filterRef.current) {
+      filterRef.current.focus();
+    }
+
     client.models.Note.observeQuery({
       filter: {
         campaignId: { eq: campaign.id },
@@ -40,6 +59,14 @@ function Notes() {
       },
     });
   }, []);
+
+  useEffect(() => {
+    if (filter === '') {
+      setNoteList(notes.data);
+    } else {
+      setNoteList(notes.data.filter((n) => n.friendlyName.toLowerCase().includes(filter.toLowerCase())));
+    }
+  }, [filter]);
 
   function deleteNote(id: string) {
     client.models.Note.delete({ id });
@@ -102,6 +129,10 @@ function Notes() {
               >
                 {note.friendlyName}
               </Link>
+              {' - '}
+              <Box color='text-body-secondary' variant='span'>
+                {note.type}
+              </Box>
             </Header>
           ),
           sections: [
@@ -133,145 +164,17 @@ function Notes() {
             </SpaceBetween>
           </Box>
         }
-        filter={<TextFilter filteringPlaceholder='Find note' filteringText={''} />}
+        filter={
+          <TextFilter
+            ref={filterRef}
+            filteringPlaceholder='Find note'
+            filteringText={filter}
+            onChange={({ detail }) => {
+              setFilter(detail.filteringText);
+            }}
+          />
+        }
       />
     </>
   );
 }
-
-// type CreateNoteModalProps = {
-//   visible: boolean;
-//   setVisible: (visible: boolean) => void;
-// };
-
-// function CreateNoteModal({ visible, setVisible }: CreateNoteModalProps) {
-//   const { client, campaign } = useLoaderData({ from: Route.id });
-//   const [name, setName] = useState('');
-//   const [description, setDescription] = useState('');
-
-//   function addNote() {
-//     client.models.Note.create({
-//       name,
-//       friendlyName: name,
-//       description,
-//       campaignId: campaign.id,
-//     });
-//   }
-
-//   function clear() {
-//     setName('');
-//     setDescription('');
-//   }
-
-//   return (
-//     <Modal
-//       onDismiss={() => setVisible(false)}
-//       visible={visible}
-//       footer={
-//         <Box float='right'>
-//           <SpaceBetween direction='horizontal' size='xs'>
-//             <Button
-//               variant='link'
-//               onClick={() => {
-//                 clear();
-//                 setVisible(false);
-//               }}
-//             >
-//               Cancel
-//             </Button>
-//             <Button variant='primary' onClick={addNote}>
-//               Ok
-//             </Button>
-//           </SpaceBetween>
-//         </Box>
-//       }
-//       header='Create note'
-//     >
-//       <form onSubmit={(e) => e.preventDefault()}>
-//         <Form>
-//           <SpaceBetween size='l'>
-//             <FormField label='Name'>
-//               <Input
-//                 onChange={({ detail }) => {
-//                   setName(detail.value);
-//                 }}
-//                 value={name}
-//                 placeholder='A powerful name'
-//               />
-//             </FormField>
-//             <FormField label='Generated ID'>
-//               <Textarea onChange={({ detail }) => setDescription(detail.value)} value={description} placeholder='A beautiful description' />
-//             </FormField>
-//           </SpaceBetween>
-//         </Form>
-//       </form>
-//     </Modal>
-//   );
-// }
-
-// type EditNoteModalProps = {
-//   note: any;
-//   visible: boolean;
-//   setVisible: (visible: boolean) => void;
-// };
-
-// function EditNoteModal({ note, visible, setVisible }: EditNoteModalProps) {
-//   const { client } = useLoaderData({ from: Route.id });
-
-//   const [name, setName] = useState(note?.name || '');
-//   const [description, setDescription] = useState(note?.description || '');
-
-//   function editNote() {
-//     client.models.Note.update({
-//       id: note.id,
-//       name,
-//       description,
-//     });
-//   }
-
-//   return (
-//     <Modal
-//       onDismiss={() => {
-//         setVisible(false);
-//       }}
-//       visible={visible}
-//       footer={
-//         <Box float='right'>
-//           <SpaceBetween direction='horizontal' size='xs'>
-//             <Button
-//               variant='link'
-//               onClick={() => {
-//                 setVisible(false);
-//               }}
-//             >
-//               Cancel
-//             </Button>
-//             <Button variant='primary' onClick={editNote}>
-//               Save
-//             </Button>
-//           </SpaceBetween>
-//         </Box>
-//       }
-//       header='Edit note'
-//     >
-//       <form onSubmit={(e) => e.preventDefault()}>
-//         <Form>
-//           <SpaceBetween size='l'>
-//             <FormField label='Name'>
-//               <Input
-//                 onChange={({ detail }) => {
-//                   setName(detail.value);
-//                 }}
-//                 value={name}
-//                 placeholder='A powerful name'
-//               />
-//             </FormField>
-//             <FormField label='Generated ID'>
-//               <Textarea onChange={({ detail }) => setDescription(detail.value)} value={description} placeholder='A beautiful description' />
-//             </FormField>
-//           </SpaceBetween>
-//         </Form>
-//       </form>
-//     </Modal>
-//   );
-// }
