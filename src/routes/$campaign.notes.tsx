@@ -30,12 +30,18 @@ function Notes() {
   const [noteList, setNoteList] = useState(notes.data);
   const [filter, setFilter] = useState('');
 
-  useHotkeys('alt+c', () => {
-    navigate({
-      to: '/$campaign/notes/create',
-      params: { campaign: campaign.name },
-    });
-  });
+  useHotkeys(
+    'alt+c',
+    () => {
+      navigate({
+        to: '/$campaign/notes/create',
+        params: { campaign: campaign.name },
+      });
+    },
+    {
+      enableOnFormTags: true,
+    }
+  );
   useHotkeys('alt+S', () => {
     if (filterRef.current) {
       filterRef.current.focus();
