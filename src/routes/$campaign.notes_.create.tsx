@@ -107,7 +107,13 @@ function CreateNote() {
       description,
       campaignId: campaign.id,
     });
-    navigate({ to: '/$campaign/$note', params: { campaign: campaign.name, note: name } });
+    // navigate({ to: '/$campaign/$note', params: { campaign: campaign.name, note: name } });
+    navigate({
+      to: '/$campaign/notes',
+      params: {
+        campaign: campaign.name,
+      },
+    });
   }
 
   return (
