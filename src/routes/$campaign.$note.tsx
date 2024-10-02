@@ -1,4 +1,4 @@
-import { Form, FormField, Header, Input, SegmentedControl, SpaceBetween, Textarea } from '@cloudscape-design/components';
+import { Button, Form, FormField, Header, Input, SegmentedControl, SpaceBetween, Textarea } from '@cloudscape-design/components';
 import { createFileRoute, useLoaderData, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -94,7 +94,25 @@ function Note() {
     <form onSubmit={(e) => e.preventDefault()}>
       <Form
         header={
-          <Header variant='h1' description={name}>
+          <Header
+            variant='h1'
+            description={name}
+            actions={
+              <Button
+                iconName='angle-left'
+                onClick={() => {
+                  navigate({
+                    to: '/$campaign/notes',
+                    params: {
+                      campaign: campaign.name,
+                    },
+                  });
+                }}
+              >
+                {campaign.friendlyName}
+              </Button>
+            }
+          >
             {friendlyName}
           </Header>
         }
